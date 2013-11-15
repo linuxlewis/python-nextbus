@@ -19,7 +19,7 @@ def __parse_agencyList(xml):
     #get the list of agencies
     agencies = xml.xpath('//agency')
 
-    agencies = map(lambda x: Agency.from_element(x), agencies)
+    agencies = [Agency.from_element(a) for a in agencies]
 
     return agencies
 
@@ -29,7 +29,7 @@ def __parse_routeList(xml):
     #get the list of routes
     routes = xml.xpath('//route')
 
-    routes = map(lambda x: Route.from_element(x), routes)
+    routes = [Route.from_element(r) for r in routes]
 
     return routes
 
@@ -59,7 +59,7 @@ class Model(object):
         """given an element, this method sets the value of the model object"""
         raise NotImplementedError()
 
-class APIError(Exception):
+class NextBusAPIError(Exception):
     """error class to describe errors from the API"""
     def __repr__(self):
         return 'NextBusAPIError()'
@@ -210,8 +210,3 @@ class Stop(Model):
         self.lat = element.get('lat')
         self.lon = element.get('lon')
         self.stop_id = element.get('stopId')
-
-
-
-
-

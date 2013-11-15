@@ -4,7 +4,7 @@ import requests
 
 from lxml import etree
 
-from .model import parse_command, APIError
+from .model import parse_command, NextBusAPIError
 
 API_URL = 'http://webservices.nextbus.com/service/publicXMLFeed'
 DEFAULTS = {}
@@ -20,8 +20,14 @@ def route_list(agency=None, **kwargs):
     return result
 
 def route_config(agency=None, route=None, **kwargs):
-    """returns list of route objects"""
+    """ takes agency string, route name, and additional api params
+    returns list of route objects"""
     result = __api_call('routeConfig', agency=agency, route=route, **kwargs) or []
+    return result
+
+def predictions(agency=None, route=None, stop_id=None, **kwargs):
+    """prediction"""
+    result = __api_call('predictions', agency=agency, route=route, stop_id=stop_id, **kwargs) or []
     return result
 
 def set_defaults(defaults):
@@ -53,7 +59,7 @@ def __api_call(command, **kwargs):
 
     #raise error for bad API call
     if len(errors) > 0:
-        raise APIError(errors[0])
+        raise NextBusAPIError(errors[0])
 
     #xml to models
     if x is not None:
@@ -69,14 +75,14 @@ def __parse_params(params):
 
     parsed_params = {}
 
-    for key, value in params.iteritems():
+    for key in params.keys():
 
         if key == 'agency':
-            parsed_params['a'] = value
+            parsed_params['a'] = params[key]
         elif key == 'route':
-            parsed_params['r'] = value
+            parsed_params['r'] = params[key]
         else:
-            parsed_params[key] = value
+            parsed_params[key] = params[key]
 
     return parsed_params
 
