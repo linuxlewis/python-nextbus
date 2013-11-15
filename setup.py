@@ -18,7 +18,7 @@ packages = [
     'nextbus',
 ]
 
-requires = []
+requires = ['requests', 'lxml']
 
 readme =''
 history =''
